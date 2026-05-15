@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String
+  email        String        @unique
+  password     String
+  role         String        @default("kasir")
+  createdAt    DateTime      @default(now())
+  transactions Transaction[]
+  activityLogs ActivityLog[]
+}
+
+model Supplier {
+  id       Int       @id @default(autoincrement())
+  name     String
+  phone    String
+  address  String
+  products Product[]
+}
+
+model Product {
+  id               Int               @id @default(autoincrement())
+  name             String
+  price            Int
+  stock            Int
+  barcode          String?           @unique
+  supplierId       Int?
+  supplier         Supplier?          @relation(fields: [supplierId], references: [id])
+  createdAt        DateTime          @default(now())
+  transactionItems TransactionItem[]
+}
+
+model Transaction {
+  id               Int               @id @default(autoincrement())
+  userId           Int
+  user             User              @relation(fields: [userId], references: [id])
+  customerId       Int?
+  customer         Customer?         @relation(fields: [customerId], references: [id])
+  total            Int
+  date             DateTime          @default(now())
+  transactionItems TransactionItem[]
+}
+
+model TransactionItem {
+  id            Int         @id @default(autoincrement())
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  productId     Int
+  product       Product     @relation(fields: [productId], references: [id])
+  quantity      Int
+  price         Int
+}
+
+model Customer {
+  id           Int           @id @default(autoincrement())
+  name         String
+  phone        String
+  totalPoints  Int           @default(0)
+  transactions Transaction[]
+  loyalties    UserLoyalty[]
+}
+
+model UserLoyalty {
+  id          Int      @id @default(autoincrement())
+  customerId  Int
+  customer    Customer @relation(fields: [customerId], references: [id])
+  points      Int
+  description String
+  createdAt   DateTime @default(now())
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  action      String
+  description String
+  createdAt   DateTime @default(now())
+}
