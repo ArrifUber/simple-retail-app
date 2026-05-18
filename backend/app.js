@@ -5,12 +5,18 @@ import authRoutes from "./routes/auth.routes.js"
 import transactionRoutes from "./routes/transaction.routes.js"
 import supplierRoutes from "./routes/supplier.routes.js"
 import customerRoutes from "./routes/customer.routes.js"
+import cors from "cors"
 
 dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT
 
+
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}))
 app.use(express.json())
 
 app.use('/api/products', productRoutes)

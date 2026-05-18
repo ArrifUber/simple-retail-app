@@ -40,7 +40,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, password } = req.body;
     const user = await prisma.user.findUnique({where: {email}});
     if (!user) {
       res.status(404).json({
@@ -56,7 +56,7 @@ const login = async (req, res) => {
         });
       } else {
         const token = jwt.sign(
-          { id: user.id, role: user.role },
+          { id: user.id, role: user.role, username: user.username },
           process.env.JWT_SECRET,
           { expiresIn: "7d" },
         );
