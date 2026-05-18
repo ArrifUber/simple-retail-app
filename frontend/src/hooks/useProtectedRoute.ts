@@ -1,19 +1,33 @@
 'use client'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import useAuth from './useAuth'
+import { use, useEffect, useState } from "react"
+import useAuth from "./useAuth"
+import { useRouter } from "next/navigation"
 
 const useProtectedRoute = () => {
-    const { user, loading } = useAuth()
+    const {user, loading} = useAuth()
+    const [isProtected, setIsProtected] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login')
+        console.log('loading: ', loading)
+        const checkUser = () => {
+            if(user){
+                setIsProtected(true)
+                console.log('masuk')
+                console.log(user)
+            } else {
+                router.push('/login')
+                console.log(user)
+                console.log('tidak masuk')
+            }
         }
-    }, [user, loading])
+        if(!loading){
+            checkUser()
+        }
+    }, [user, loading, router])
 
-    return { user, loading }
+    return {isProtected, loading}
 }
+
 
 export default useProtectedRoute

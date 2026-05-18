@@ -1,45 +1,41 @@
-import { useState, useEffect } from 'react'
-import api from '../lib/api'
-import { jwtDecode } from 'jwt-decode'
+'use client'
+import { jwtDecode, JwtPayload } from "jwt-decode"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+
+
 
 const useAuth = () => {
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState<JwtPayload | null>(null)
     const [loading, setLoading] = useState(true)
+    const router = useRouter()
 
-    // cek token saat pertama load
     useEffect(() => {
-        // ambil token dari localStorage
-        const token = localStorage.getItem('token')
-        if(token){
-            // kalau ada → set user
-            const decode = jwtDecode(token)
-            setUser(decode)
-            setLoading(false)
-        } else {
-            // kalau tidak ada → set loading false
-            setLoading(false)
+        const checkToken = () => {
+            try {
+                const token = localStorage.getItem('token')
+                if(!token){
+                    return
+                }
+                const decodedToken = jwtDecode(token)
+                setUser(decodedToken)
+            } catch (error) {
+                console.error('Invalid Token: ', error)
+            } finally {
+                setLoading(false)
+            }
         }
+        checkToken()
     }, [])
 
-    const login = async (email: string, password: string) => {
-        // kirim ke POST /auth/login
-        const response = await api.post('/auth/login', {email, password})
-        // simpan token ke localStorage
-        localStorage.setItem('token', response.data.token)
-        // set user
-        const decode = jwtDecode(response.data.token)
-        setUser(decode)
-    }
-
     const logout = () => {
-        // hapus token dari localStorage
         localStorage.removeItem('token')
-        // set user jadi null
-        setUser(null
-        )
+        setUser({})
+        router.push('/login')
     }
 
-    return { user, loading, login, logout }
+    return {user, loading, logout}
 }
+
 
 export default useAuth
