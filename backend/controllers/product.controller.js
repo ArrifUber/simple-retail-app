@@ -62,7 +62,9 @@ const getByBarcode = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const { name, price, stock, barcode } = req.body;
+    const price = parseInt(req.body.price)
+    const stock = parseInt(req.body.stock)
+    const { name, barcode } = req.body;
     const newProduct = await prisma.product.create({
       data: {
         name,
