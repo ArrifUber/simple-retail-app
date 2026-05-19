@@ -21,11 +21,10 @@ const CreatePage = () => {
     });
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       setLoading(true);
-      console.log(form);
       await api.post("/products", {
         ...form,
         barcode: form.barcode === '' ? null : form.barcode
