@@ -7,3 +7,10 @@ export interface Product {
     createdAt?: string
     supplierId?: number
 }
+
+export interface CartItem {
+    id: number
+    name: string
+    price: number
+    quantity: number
+}

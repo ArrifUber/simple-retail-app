@@ -32,6 +32,7 @@ const getAll = async (req, res) => {
 const checkout = async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log(req.body)
     const { customer_id, total, transaction_items } = req.body;
 
     const result = await prisma.$transaction(async (tx) => {
@@ -73,6 +74,7 @@ const checkout = async (req, res) => {
       message: "transaksi berhasil dibuat",
     });
   } catch (error) {
+    console.error(error)
     res.status(500).json({
       success: false,
       message: error.message,
